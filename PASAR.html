@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Halaman Utama - Peta Fasilitas Umum Kota Bandar Lampung</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background-color: #f0f0f5; }
+    .header {
+      background-image: url('ADIPURA.jpg');
+      height: 120px;
+      background-size: cover;
+      border-bottom: 4px solid #006400;
+    }
+    .title-box {
+      text-align: center;
+      background-color: #eaffea;
+      padding: 20px;
+      font-size: 20px;
+    }
+    .nav-buttons {
+      text-align: center;
+      margin: 15px 0;
+    }
+    .nav-buttons a {
+      background-color: #006400;
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+    .deskripsi {
+      background-color: #fff;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    #map { height: 500px; margin: 20px auto; max-width: 95%; border: 2px solid #ccc; }
+    .footer { text-align: center; padding: 15px; background-color: #006400; color: white; }
+  </style>
+</head>
+<body>
+  <div class="header"></div>
+
+  <div class="title-box">
+    <h2>Peta Fasilitas Umum Kota Bandar Lampung, Provinsi Lampung</h2>
+  </div>
+
+  <div class="nav-buttons">
+    <a href="HALAMAN UTAMA.html">Halaman Utama</a>
+    <a href="PENDIDIKAN.html">Pendidikan</a>
+    <a href="CAGAR BUDAYA.html">Cagar Budaya</a>
+    <a href="PASAR.html">Pasar</a>
+    <a href="TEMPAT OLAHRAGA.html">Tempat Olahraga</a>
+    <a href="TERMINAL BUS.html">Terminal Bus</a>
+  </div>
+
+  <div class="deskripsi">
+    <h3>Pasar</h3>
+    <p>Pasar Kota Bandar Lampung merupakan pusat aktivitas ekonomi dan perdagangan yang vital bagi masyarakat setempat. 
+	Pasar-pasar tradisional seperti Pasar Bambu Kuning, Pasar Tugu, dan Pasar Panjang tidak hanya menyediakan berbagai kebutuhan pokok, tetapi juga menjadi ruang interaksi sosial yang hidup.
+	Dengan keragaman produk lokal, suasana yang dinamis, serta letaknya yang strategis, pasar-pasar ini mencerminkan denyut kehidupan kota dan berperan penting dalam mendukung perekonomian warga Bandar Lampung.
+.</p>
+  </div>
+
+  <div id="map"></div>
+
+  <div class="footer">
+    Dibuat oleh: Anisa Lutfiani 2213034058 - Pendidikan Geografi Universitas Lampung
+  </div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([-5.4295, 105.2619], 11); // Pusat Kota Bandar Lampung
+
+  // Basemap
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Tampilkan GeoJSON PASAR di Bandar Lampung
+  fetch('PASAR.geojson')
+    .then(response => response.json())
+    .then(data => {
+      L.geoJSON(data, {
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, {
+            radius: 6,
+            fillColor: "#FF4500",   // oranye terang
+            color: "#8B0000",       // merah gelap
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+          });
+        },
+        onEachFeature: function (feature, layer) {
+          if (feature.properties) {
+            let popupContent = "";
+            for (const key in feature.properties) {
+              popupContent += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindPopup(popupContent);
+            if (feature.properties.NAMOBJ) {
+              layer.bindTooltip(feature.properties.NAMOBJ, { permanent: false, direction: 'top' });
+            }
+          }
+        }
+      }).addTo(map);
+    })
+    .catch(error => {
+      console.error('Gagal memuat GeoJSON PASAR:', error);
+    });
+</script>
+</body>
+</html>
